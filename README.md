@@ -166,14 +166,16 @@ Notice that in both cases, the arrow functions retain the context that they were
 
 ### Which is preferred
 
-At this point, you may be wondering whether you should be using an arrow function or stick with `bind`, `call` and `apply`.  Certainly, both are correct.  However, whether to using arrow functions is really a question of whether the function should be anonymous.  Prime candidates for anonymous functions are are our callbacks to iterators: the callbacks that we pass into the `map`, `filter`, and `forEach` functions can be anonymous, especially if you find yourself wrestling with `this` as they are an argument to a different function.  More complicated functions that will be reused are better candidates to named functions.  This is one of those things that is more an art than a science and that you will and your teammates will develop their own preferences for over time.   
+At this point, you may be wondering whether you should be using an arrow function or stick with `bind`, `call` and `apply`.  Certainly, both are correct.  However, whether to using arrow functions is really a question of whether the function should be anonymous.  Prime candidates for anonymous functions are our callbacks to iterators: the callbacks that we pass into the `map`, `filter`, and `forEach` functions can be anonymous, especially if you find yourself wrestling with `this` as they are an argument to a different function.  More complicated functions that will be reused are better candidates to named functions.  This is one of those things that is more an art than a science and that you will and your teammates will develop their own preferences for over time.   
 
 ### Summary
 
-In the lesson above, we saw that arrow functions allow us to declare functions with minimal syntax.  We saw that if we do not declare the function with brackets, that we do not to provide an explicit return value to the function.  Finally, we saw that the `this` value of an arrow function equals the `this` value at the time the function is declared.  
+In the lesson above, we saw that arrow functions allow us to declare functions with minimal syntax.  We saw that if we do not declare the function with brackets, that we do not need to provide an explicit return value to the function.  Finally, we saw that the `this` value of an arrow function equals the `this` value at the time the function is declared.  
 
 ## Resources
 
 - [MDN: Arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions)
 
 <p class='util--hide'>View <a href='https://learn.co/lessons/javascript-arrow-functions'>Arrow Functions</a> on Learn.co and start learning to code for free.</p>
+
+<p class='util--hide'>View <a href='https://learn.co/lessons/js-advanced-scope-arrow-functions-readme'>Arrow Functions</a> on Learn.co and start learning to code for free.</p>
