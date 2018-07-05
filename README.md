@@ -1,185 +1,175 @@
 JavaScript Arrow Functions
 ---
 
+## Problem Statement
+
+The original style for declaring functions in JavaScript is the _function
+declaration_.
+
+```js
+function foo() {
+  return 'bar';
+}
+```
+
+But JavaScript has two other ways to write functions: the _function expression_
+and the _arrow function_. None of these is more correct or better than others.
+
 ## Objectives
 
-1. Practice writing arrow functions
-2. Explain how arrow functions differ from named functions
+1. Declare a function using a function expression
+2. Declare a function using an arrow function
 3. Describe situations where arrow functions come in handy
 
-## Function, function, function, function, function
+## Declare a Function Using a Function Expression
 
-You're familiar by now with the standard `function foo() { return 'bar' }` style of functions in JavaScript.
-Well, there is another way to write functions in JavaScript called arrow functions:
+Thus far we've only ever used a _function declaration_:
 
-``` javascript
-// using our old standard function
-const oldStandardFunction = function() {
-  return "old standard functions rule!"
+```js
+function foo() {
+  return 'bar';
 }
-
-
-// updating to use an arrow function
-const arrowFunction = () => {
-  return 'Arrow functions are great!'
-};
 ```
 
-These are called [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) in reference to the little `=>` that characterizes them.
-
-Arrow functions are invoked just like regular functions.
-
-``` javascript
-arrowFunction() // 'Arrow functions are great!'
-```
-
-Let's piece together how they work.
-
-``` javascript
-const arrowFunction = () => {
-  return 'Arrow functions are great!'
-};
-```
-
-Just like a regular function you've seen before, the body of an arrow function is declared inside the `{ }` brackets. The function parameters are declared in the parentheses before the arrow, which points to the body of the function.  
-
-In a divergence from regular functions, if we omit the curly braces from around the function body (or replace them with parentheses), arrow functions give us implicit returns.  This only works if we write our arrow functions without brackets.
-
-``` javascript
-const square = (n) => (n * n)
-
-square(3) // 9
-
-const notSquare = (n) => { n * n }
-notSquare(3)
-// undefined
-
-const backToSquared = (n) => { return n * n }
-backToSquared(3)
-// 9
-
-```
-## Anonymity's the Name of the Game
-
-All arrow functions are anonymous. This is unlike regular functions, which take their names from their identifiers.
-
-``` javascript
-function iHaveAName() {}
-
-iHaveAName.name // 'iHaveAName'
-```
-
-But arrow functions don't have identifiers, so they're always anonymous.
-
-``` javascript
-(() => {}).name // ''
-```
-
-We can set a pointer to an arrow function, or pass an arrow function through as an argument to another function:
-
-```javascript
-  const square = (n => n * n)
-  // note that while the function is anonymous, we have assigned it to the variable 'square'
-
-  [1, 2, 3].map(n => n * n)
-  // [1, 4, 9]
-  // The shorthand nature of arrow functions makes them useful for inline definitions
-
-  [1, 2, 3].map(square)
-  // [1, 4, 9]
-```
-
-It is important to remember that, in JavaScript, functions are 'first class objects'. They can be passed, declared, handled, and have properties and methods just like any other object.
-
-We know that a function declaration (not invocation!) has a return value itself because we just assigned it to the variable `square` above. **The return value of a function declaration is a pointer to the function object itself.**
-
-## Arrow Functions and 'this'
-
-As we saw earlier, when a function is invoked from another function, the `context` or `this` value is global.  Let's see that again:
+A function can also be written:
 
 ```js
-
-  const person = {
-    firstName: 'bob',
-    greet: function() {
-      return function reallyGreet() {
-        return `Hi, I'm ${this.firstName}`
-      }
-    }
-  }
-  person.greet()()
-  // Hi, I'm undefined
-  // Here, we use two parentheses to invoke the returned function from person.greet()
-```
-
-As you can see, `this` does not know what `.firstName` is because it has reverted to global scope where `.firstName` is undefined. We see that the inner function is not in the same context as the `person` object. Assuming we want them to have access to the same context, (or `this` value), how can we fix this? In steps `bind`!
-
-```js
-
-const person = {
-  firstName: 'bob',
-  greet: function() {
-    return function reallyGreet() {
-      return `Hi, I'm ${this.firstName}`
-    }.bind(this)
-  }
+let foo = function() {
+  return 'bar';
 }
-person.greet()()
-// Hi, I'm bob
-// Here, we use two parentheses to invoke the returned function from person.greet()
 ```
 
-As a quick review, in the above code, calling `person.greet()` executes the `greet` method which returns the `reallyGreet` function and binds the context of that function to `person`. Another way to achieve the same result of setting the inner function's context to `person` is with an arrow function.  If we use an arrow function, the inner function retains the scope of the method it was declared in.  Let's see it:
+The `function() {...}` to the right of the assignment operator (`=`) is called
+a _function expression_. The best way to understand what a function expression
+is is by analogy.
 
 ```js
-
-  const person = {
-    firstName: 'bob',
-    greet: function() {
-      return () => {
-        return `Hi, I'm ${this.firstName}`
-      }
-    }
-  }
-  person.greet()()
-  // "Hi, I'm bob"
+let sum = 1 + 1
 ```
 
-As you can see, this inner arrow function retains the context of the outer `greet` method.  Just as the outer `greet` method's context is `person`, the inner function's context is also `person`. The arrow function has performed `.bind(this)` for us behind the scenes.
-
-Let's see this same principle as it applies to callbacks. Both the following examples use an arrow function as the callback for `map`, but notice the different context:
+EVALUATE the expression `1 + 1`, RETURNING `2` and ASSIGN it to the variable `sum`
 
 ```js
+let difference = 10 - 1;
+```
 
-const person = {
-  firstName: 'bob',
-  greet: function() {
-    return [1, 2, 3].map(() => this)
-  }
+EVALUATE the expression `10 - 1`, RETURNING `9` and ASSIGN it to the variable
+`difference`.
+
+```js
+let foo = function() {
+  return 'bar';
 }
-
-person.greet()
-// {firstName: "bob", greet: ƒ}
-// {firstName: "bob", greet: ƒ}
-// {firstName: "bob", greet: ƒ}
-
-[1, 2, 3].map(() => this)
-// window
-// window
-// window
 ```
-In both cases, the arrow function retains the context that it is defined in. In the first case, the arrow function is defined in the `greet` method, where the `this` value references `person`.  Therefore, the `this` value within the arrow function is also `person`.  In the second case, the context within the arrow function is the global scope. Therefore, its `this` value is whatever the global scope is. In the case of the browser, `window`!
 
-### Which is preferred
+EVALUATE the expression `function() { return 'bar' }`, RETURNING a thing that
+can be called and ASSIGN it to the variable `foo`. The function expression
+(again, the thing to the right of `=`) is known as "an anonymous
+function." It doesn't have a name associated with it like you see in a
+_function declaration_.
 
-So which is better: an arrow function or a good old-fashioned function expression?  Drumroll, please... and the answer is, "Neither!"  They are different and each has its uses.  Arrow functions bring some nice advantages to the table, but they also have their limitations.  For example, arrow functions are not ideal for declaring object methods, as they will not pick up the object as the `this` context.  Also, arrow functions cannot be used as constructors.  As you build your JavaScript skills, you will develop a feel for when to use them.  Please make sure to explore the MDN resource listed below for further details.
+However, when we assign an anonymous function to a name (that is, a variable),
+we have name that points to a callable thing. We could call this anonymous
+function by invoking `foo()`. That anonymous function is now, for all
+reasonable purposes, named `foo`.
 
-### Summary
+There are a few subtle differences between _function declarations_ and
+_function expressions_, but they are very minute. Neither is really better than
+the other. JavaScript supports variety. Neither is better or more preferred
+than the other.
 
-In the lesson above, we saw that arrow functions allow us to declare functions with minimal syntax. We saw that if we do not declare the function with brackets, then we do not need to provide an explicit return value to the function.  Finally, we saw that the `this` value of an arrow function is the same as the `this` value of its enclosing object.
+Try thinking about the following code. Will this work? Does it work? Try to
+explain to yourself what's happening using the words "anonymous function" and
+"`call`." If you need help, see IIFE in the Resources section below.
+
+```js
+(function() { console.log("Hello world") })()
+```
+
+## Declare a Function Using An Arrow Function
+
+Around 2015, developers got tired of typing `f-u-n-c-t-i-o-n` over and over.
+They lobbied the ECMAScipt body for a way to write functions in a very short
+way. Here is the result, the "Arrow Function."
+
+```js
+let add = (parameter1, parameter2) => parameter1 + parameter2
+add(2,3) //=> 5
+```
+
+Yes, this works! Really! This builds on the syntax of the _function expression_
+just covered. The arrow syntax just lets you cut out a some typing.
+
+`add` is the name to which the following _anonymous function_ is assigned, same
+as in the previous section:
+
+```js
+(parameter1, parameter2) => parameter1 + parameter2
+```
+
+This is a very short function! It adds `parameter1` and `parameter2`.  Without
+any braces, arrow functions **automatically** return the result of the last
+expression.
+
+Functions like this are very common in JavaScript's iterator methods that we'll
+cover in a future lesson.
+
+As one final gift to programmers' fingers, if your arrow function has only
+_one_ parameter, JavaScript will let you drop the `()` around the parameter:
+
+```js
+let twoAdder = x => x + 2;
+```
+
+If we need to do more work than return a mere single expression, we'll need
+`{}` to wrap the multiple lines of code **and** we'll have to declare a
+`return`.
+
+```js
+let sum = (parameter1, parameter2) => {
+  console.log(`Adding ${parameter1}`);
+  console.log(`Adding ${parameter2}`);
+  return parameter1 + parameter2;
+}
+sum(1,2) //=> 3
+```
+
+## Describe Situations Where Arrow Functions Come In Handy
+
+As a preview of advanced iteration in JavaScipt, we'll show the `.map()`
+function iterates through one `Array`, passes each element to a function that's
+passed in as an argument, takes that functions return value, and stacks it into
+a new array.
+
+```js
+const nums = [1,2,3];
+const squares = nums.map(x => x ** 2); //=> [2,4,6]
+const doubles = nums.map(x => x * 2); //=> [1,4,9]
+```
+
+If all this math stuff seems a bit too, textbook-y, realize that a similar
+pattern could be done with DOM elements:
+
+finishedItems = overdueTodoItems.map( item => item.className = "complete" );
+header.innerText = `You finished ${finishedItems.length} items!`;
+
+Or billing software:
+
+lapsedUserAccounts.map( u => sendBillTo(u.address) )
+
+In a subsequent lesson we'll show the power of arrow functions with other
+iterator methods.
+
+## Conclusion
+
+In this lesson you saw two different styles for declaring functions: function
+expressions and arrow functions. Neither is "better" than the standard function
+declaration we've been using. Arrow functions excel when a simple change or
+opration needs to be used repeatedly. But they're certainly used to write long,
+full functions too!
 
 ## Resources
 
 - [MDN: Arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions)
+- [IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE)
 
-<p class='util--hide'>View <a href='https://learn.co/lessons/javascript-arrow-functions'>Arrow Functions</a> on Learn.co and start learning to code for free.</p>
