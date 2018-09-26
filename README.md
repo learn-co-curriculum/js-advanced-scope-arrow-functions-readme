@@ -20,7 +20,7 @@ const oldStandardFunction = function() {
 
 // updating to use an arrow function
 const arrowFunction = () => {
-  return 'Arrow functions are great!';
+  return 'Arrow functions are great too!';
 };
 ```
 
@@ -42,31 +42,70 @@ const arrowFunction = () => {
 ```
 
 Just like a regular function you've seen before, the body of an arrow function
-is declared inside the `{ }` brackets. The function parameters are declared in
-the parentheses before the arrow, which points to the body of the function.
+is declared inside the `{ }` brackets, also referred to as a "block body". The
+function parameters are declared in the parentheses before the arrow, which
+points to the body of the function.
 
-In a divergence from regular functions, if we omit the curly braces from around
-the function body (or replace them with parentheses), arrow functions give us
-implicit returns. This only works if we write our arrow functions without
-brackets.
+Using brackets, you must use an explicit `return` statement just as normal
+functions require. With arrow functions, however, we can omit the curly braces
+from around the function body and _implicitly_ return a value:
 
 ```javascript
-const square = n => n * n;
+const oldSquare = function(n) {
+  return n * N;
+};
 
-square(3); // 9
+const newSquare = n => n * n;
 
-const notSquare = n => {
+oldSquare(3); // 9
+newSquare(3); // 9
+```
+
+**Note:** the syntax above will only work if the method is written on one line.
+Also worth noting is that we cannot mix the two:
+
+```js
+const newSquare = n => {
   n * n;
 };
-notSquare(3);
-// undefined
 
-const backToSquared = n => {
-  return n * n;
-};
-backToSquared(3);
-// 9
+newSquare(3); // undefined
 ```
+
+It is possible to remote the brackets and write a multiple line function:
+
+```js
+const newSquare = n => n * n;
+
+newSquare(3); // 9
+```
+
+...but this syntax is designed to handle a _single_ expression, so something
+like the following would cause an error:
+
+```js
+const newSquare = (n) => (
+  console.log(n);
+  n * n
+)
+// Uncaught SyntaxError: Unexpected identifier
+```
+
+If there is only _one_ argument for an arrow function, we can also omit the
+argument parentheses:
+
+```js
+const newSquare = n => n * n;
+
+newSquare(3); // 9
+
+const pythagoreanTheorem = (a, b) => Math.sqrt(newSquare(a) + newSquare(b));
+
+pythagoreanTheorem(3, 4); // 5
+```
+
+Using arrow functions this way allows us to remove some of the _noise_ around
+the _signal_ by removing some syntax and focusing on the expression.
 
 ## Anonymity's the Name of the Game
 
@@ -88,20 +127,13 @@ But arrow functions don't have identifiers, so they're always anonymous.
 We can set a pointer to an arrow function, or pass an arrow function through as
 an argument to another function:
 
-```javascript
-const square = (n => n * n)[
-  // note that while the function is anonymous, we have assigned it to the variable 'square'
+```
+const square = n => n * n
+// note that while the above function is anonymous, we have assigned it to the variable 'square'
 
-  (1, 2, 3)
-]
-  .map(n => n * n)
-  [
-    // [1, 4, 9]
-    // The shorthand nature of arrow functions makes them useful for inline definitions
+[1, 2, 3].map(n => n * n) // [1, 4, 9]
 
-    (1, 2, 3)
-  ].map(square);
-// [1, 4, 9]
+[1, 2, 3].map(square); // [1, 4, 9]
 ```
 
 It is important to remember that, in JavaScript, functions are 'first class
@@ -114,51 +146,58 @@ of a function declaration is a pointer to the function object itself.**
 
 ## Arrow Functions and 'this'
 
-As we saw earlier, when a function is invoked from another function, the
-`context` or `this` value is global. Let's see that again:
+When a standard function is invoked from another function, `this` is assigned to
+the default context, `window`, sometimes referred to as 'global'. Just to
+review:
 
 ```js
 const person = {
   firstName: 'bob',
   greet: function() {
+    console.log("1 - 'person' object context: ", this);
     return function reallyGreet() {
+      console.log('2 - default context: ', this);
       return `Hi, I'm ${this.firstName}`;
     };
   }
 };
-person.greet()();
-// Hi, I'm undefined
-// Here, we use two parentheses to invoke the returned function from person.greet()
+person.greet()(); // two parentheses used here to invoke the returned function
+
+// 1 - 'person' object context:  {firstName: "bob", greet: ƒ}
+// 2 - default context:  Window {postMessage: ƒ, blur: ƒ, focus: ƒ, close: ƒ, frames: Window, …}
+// "Hi, I'm undefined"
 ```
 
 As you can see, `this` does not know what `.firstName` is because it has
-reverted to global scope where `.firstName` is undefined. We see that the inner
-function is not in the same context as the `person` object. Assuming we want
-them to have access to the same context, (or `this` value), how can we fix this?
-In steps `bind`!
+reverted to default context where `.firstName` is undefined. We see that the
+inner function is not in the same context as the `person` object. Assuming we
+want them to have access to the same context, (or `this` value), how can we fix
+this? In steps `bind`!
 
 ```js
 const person = {
   firstName: 'bob',
   greet: function() {
+    console.log('1 - ', this);
     return function reallyGreet() {
+      console.log('2 - ', this);
       return `Hi, I'm ${this.firstName}`;
-    }.bind(this);
+    }.bind(this); // bind added to end of 'reallyGreet()'
   }
 };
-person.greet()();
-// Hi, I'm bob
-// Here, we use two parentheses to invoke the returned function from person.greet()
+person.greet()(); // two parentheses used here to invoke the returned function
+// 1 -  {firstName: "bob", greet: ƒ}
+// 2 -  {firstName: "bob", greet: ƒ}
+// "Hi, I'm bob"
 ```
 
 As a quick review, in the above code, calling `person.greet()` executes the
 `greet` method which returns the `reallyGreet` function and binds the context of
-that function to `person`. Another way to achieve the same result of setting the
-inner function's context to `person` is with an arrow function. If we use an
-arrow function, the inner function retains the context of the method it was
-declared in. That way, `this` inside the arrow function will be the same as
-`this` inside the containing function, the same as if we had called bind
-manually.
+that function to `person`. Arrow functions provide an alternative way to achieve
+this. Arrow functions **do not have their own `this`**. Instead of setting
+`this` when invoked, the arrow function uses whatever context it was already
+in. That way, `this` inside the arrow function will be the same as `this` inside
+the outer, containing function, the same as if we had called `bind` manually.
 
 ```js
 const person = {
@@ -175,14 +214,13 @@ person.greet()();
 
 As you can see, this inner arrow function retains the context of the outer
 `greet` method. Just as the outer `greet` method's context is `person`, the
-inner function's context is also `person`. The arrow function has performed
-`.bind(this)` for us behind the scenes.
+inner function's context is now also `person`.
 
 Let's see this same principle as it applies to callbacks. Both the following
 examples use an arrow function as the callback for `map`, but notice the
 different context:
 
-```js
+```
 const person = {
   firstName: 'bob',
   greet: function() {
@@ -190,16 +228,11 @@ const person = {
   }
 };
 
-person.greet()[
-  // {firstName: "bob", greet: ƒ}
-  // {firstName: "bob", greet: ƒ}
-  // {firstName: "bob", greet: ƒ}
+person.greet()
+// [{firstName: "bob", greet: ƒ}, {firstName: "bob", greet: ƒ}, {firstName: "bob", greet: ƒ}]
 
-  (1, 2, 3)
-].map(() => this);
-// window
-// window
-// window
+[1, 2, 3].map(() => this);
+// [Window, Window, Window]
 ```
 
 In both cases, the arrow function retains the context that it is defined in. In
