@@ -75,7 +75,9 @@ newSquare(3); // undefined
 It is possible to remote the brackets and write a multiple line function:
 
 ```js
-const newSquare = n => n * n;
+const newSquare = n => (
+  n * n;
+)
 
 newSquare(3); // 9
 ```
