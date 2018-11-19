@@ -72,7 +72,7 @@ const newSquare = n => {
 newSquare(3); // undefined
 ```
 
-It is possible to remote the brackets and write a multiple line function:
+It is possible to replace the brackets with parentheses and write a multiple line function:
 
 ```js
 const newSquare = n => (
