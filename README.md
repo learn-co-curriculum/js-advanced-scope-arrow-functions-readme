@@ -218,7 +218,7 @@ As you can see, this inner arrow function retains the context of the outer
 `greet` method. Just as the outer `greet` method's context is `person`, the
 inner function's context is now also `person`.
 
-Let's see this same principle as it applies to callbacks. Both the following
+Let's see this same principle as it applies to callbacks. Both of the following
 examples use an arrow function as the callback for `map`, but notice the
 different context:
 
