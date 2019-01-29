@@ -52,7 +52,7 @@ from around the function body and _implicitly_ return a value:
 
 ```javascript
 const oldSquare = function(n) {
-  return n * N;
+  return n * n;
 };
 
 const newSquare = n => n * n;
